@@ -1,0 +1,6 @@
+[package]
+name = "krum"
+version = "0.1.0"
+authors = ["abhijeetbhagat <abhijeet.bhagat@gmx.com>"]
+
+[dependencies]
