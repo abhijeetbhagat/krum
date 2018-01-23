@@ -34,5 +34,6 @@ pub enum Token {
     RightParen,
     DoubleQuote,
     SemiColon,
-    Eof
+    Eof,
+    Invalid
 }
