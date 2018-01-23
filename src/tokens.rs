@@ -1,10 +1,10 @@
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
-    Ident,
-    Bool,
-    Num,
-    Char,
-    Str,
+    Ident(String),
+    Bool(bool),
+    Num(f64),
+    Char(char),
+    Str(String),
     HashLeftParen,
     HashU8LeftParen,
     Apostrophe,

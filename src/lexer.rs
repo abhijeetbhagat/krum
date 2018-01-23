@@ -34,10 +34,50 @@ impl<'a> Lexer<'a> {
             return Token::Eof
         }
 
+        let mut tokens = vec![];
+        loop { 
+            let tok = self.parse_left_paren();
+            if tok.is_none() {
+                tok = self.parse_right_paren();
+            }
+            if tok.is_none() {
+                tok = self.parse_string();
+            }
+            if tok.is_none() {
+                tok = self.parse_ident();
+            }
+            if tok.is_some() {
+                tokens.push(tok);
+            }
+        }
         match self.src[self.i] as char {
             '(' => {self.i = self.i + 1; return Token::LeftParen},
             ')' => {self.i = self.i + 1; return Token::RightParen}, 
             _ => Token::Invalid
+        }
+    }
+
+    fn parse_left_paren(&mut self) -> Option<Token>{
+        match self.src[i] { 
+            '(' => Ok(Token::LeftParen),
+            _ => None
+        }
+    }
+
+    fn parse_right_paren(&mut self) -> Option<Token>{
+        match self.src[i] { 
+            ')' => Ok(Token::RightParen),
+            _ => None
+        }
+    }
+
+    fn parse_string(&mut self) -> Option<Token> {
+        let mut s = String::new();
+        match self.src[i] {
+            '"' => loop { 
+                self.i = self.i + 1;
+            },
+            _ => None
         }
     }
 }
