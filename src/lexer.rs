@@ -102,3 +102,14 @@ fn test_token_read_1() {
     assert_eq!(tokens[0], Token::LeftParen);
     assert_eq!(tokens[1], Token::RightParen);
 }
+
+#[test]
+fn test_token_read_2() {
+    let mut l = Lexer::new("\"abhi\"");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 1);
+    if let Token::Str(ref a) = tokens[0] { 
+        assert_eq!(a.len(), 4);
+        assert_eq!(*a, String::from("abhi"));
+    }
+}
