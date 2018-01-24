@@ -25,13 +25,13 @@ impl<'a> Lexer<'a> {
         self.cur_tok.clone()
     }
 
-    pub fn get_tok(&mut self) -> Token { 
-        self.read_and_advance()
+    pub fn get_tokens(&mut self) -> Vec<Token> { 
+        self.tokenize()
     }
 
-    fn read_and_advance(&mut self) -> Token {
+    fn tokenize(&mut self) -> Vec<Token> {
         if self.i == self.src_len {
-            return Token::Eof
+            return vec![]
         }
 
         let mut tokens = vec![];
@@ -47,14 +47,14 @@ impl<'a> Lexer<'a> {
                 tok = self.parse_ident();
             }
             if tok.is_some() {
-                tokens.push(tok);
+                tokens.push(tok.unwrap());
+                self.i = self.i + 1;
+            } 
+            if self.i == (self.src.len()){
+                break;
             }
         }
-        match self.src[self.i] as char {
-            '(' => {self.i = self.i + 1; return Token::LeftParen},
-            ')' => {self.i = self.i + 1; return Token::RightParen}, 
-            _ => Token::Invalid
-        }
+        tokens
     }
 
     fn parse_left_paren(&mut self) -> Option<Token>{
@@ -94,9 +94,11 @@ impl<'a> Lexer<'a> {
 }
 
 #[test]
-fn test_token_read_1() { 
+fn test_token_read_1() {
     let mut l = Lexer::new("()");
     assert_eq!(l.get_cur_tok(), Token::Eof);
-    assert_eq!(l.get_tok(), Token::LeftParen);
-    assert_eq!(l.get_tok(), Token::RightParen);
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 2);
+    assert_eq!(tokens[0], Token::LeftParen);
+    assert_eq!(tokens[1], Token::RightParen);
 }
