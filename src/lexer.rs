@@ -44,6 +44,9 @@ impl<'a> Lexer<'a> {
                 tok = self.parse_string();
             }
             if tok.is_none() {
+                tok = self.parse_bool();
+            }
+            if tok.is_none() {
                 tok = self.parse_ident();
             }
             if tok.is_some() {
@@ -91,10 +94,27 @@ impl<'a> Lexer<'a> {
     fn parse_ident(&mut self) -> Option<Token> {
         unimplemented!();
     }
+
+    fn parse_num(&mut self) -> Option<Token> {
+        let mut num = String::new();
+        unimplemented!();
+    }
+
+    fn parse_bool(&mut self) -> Option<Token> {
+        if self.src[self.i] as char == '#' {
+            match self.src[self.i + 1] as char  {
+                't' => {self.i = self.i + 1; return Some(Token::Bool(true))},
+                'f' => {self.i = self.i + 1; return Some(Token::Bool(false))},
+                _ => return None
+            }
+
+        }
+        None
+    }
 }
 
 #[test]
-fn test_token_read_1() {
+fn test_token_read_empty_parens() {
     let mut l = Lexer::new("()");
     assert_eq!(l.get_cur_tok(), Token::Eof);
     let tokens = l.get_tokens();
@@ -104,12 +124,22 @@ fn test_token_read_1() {
 }
 
 #[test]
-fn test_token_read_2() {
+fn test_token_read_string() {
     let mut l = Lexer::new("\"abhi\"");
     let tokens = l.get_tokens();
     assert_eq!(tokens.len(), 1);
     if let Token::Str(ref a) = tokens[0] { 
         assert_eq!(a.len(), 4);
         assert_eq!(*a, String::from("abhi"));
+    }
+}
+
+#[test]
+fn test_token_read_bool_true() {
+    let mut l = Lexer::new("#t");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 1);
+    if let Token::Bool(ref b) = tokens[0] { 
+        assert_eq!(*b, true);
     }
 }
