@@ -36,7 +36,7 @@ impl<'a> Lexer<'a> {
 
         let mut tokens = vec![];
         loop { 
-            let tok = self.parse_left_paren();
+            let mut tok = self.parse_left_paren();
             if tok.is_none() {
                 tok = self.parse_right_paren();
             }
@@ -58,27 +58,38 @@ impl<'a> Lexer<'a> {
     }
 
     fn parse_left_paren(&mut self) -> Option<Token>{
-        match self.src[i] { 
-            '(' => Ok(Token::LeftParen),
+        match self.src[self.i] as char { 
+            '(' => Some(Token::LeftParen),
             _ => None
         }
     }
 
     fn parse_right_paren(&mut self) -> Option<Token>{
-        match self.src[i] { 
-            ')' => Ok(Token::RightParen),
+        match self.src[self.i] as char { 
+            ')' => Some(Token::RightParen),
             _ => None
         }
     }
 
     fn parse_string(&mut self) -> Option<Token> {
         let mut s = String::new();
-        match self.src[i] {
-            '"' => loop { 
-                self.i = self.i + 1;
+        match self.src[self.i] as char {
+            '"' => {
+                loop { 
+                    self.i = self.i + 1;
+                    if self.src[self.i] as char == '"' {
+                        break;
+                    }
+                    s.push(self.src[self.i].clone() as char);
+                }
             },
-            _ => None
+            _ => return None
         }
+        Some(Token::Str(s))
+    }
+
+    fn parse_ident(&mut self) -> Option<Token> {
+        unimplemented!();
     }
 }
 
