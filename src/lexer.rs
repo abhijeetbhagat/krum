@@ -47,13 +47,13 @@ impl<'a> Lexer<'a> {
                 tok = self.parse_bool();
             }
             if tok.is_none() {
-                tok = self.parse_ident();
+                tok = self.parse_symbol();
             }
             if tok.is_some() {
                 tokens.push(tok.unwrap());
                 self.i = self.i + 1;
             } 
-            if self.i == (self.src.len()){
+            if self.i >= (self.src.len()){
                 break;
             }
         }
@@ -91,14 +91,34 @@ impl<'a> Lexer<'a> {
         Some(Token::Str(s))
     }
 
-    fn parse_ident(&mut self) -> Option<Token> {
-        unimplemented!();
-    }
-
-    fn parse_num(&mut self) -> Option<Token> {
-        let mut num = String::new();
-        unimplemented!();
-    }
+    fn parse_symbol(&mut self) -> Option<Token> {
+        let mut symbol = String::new();
+        loop {
+            match self.src[self.i] as char { 
+                '(' | 
+                ')' |
+                '.' |
+                '#' |
+                '\'' |
+                ' ' |
+                '\n' |
+                '\t' |
+                '"' |
+                '[' |
+                ']' => break,
+                c @ _ => symbol.push(c)
+            }
+            self.i = self.i + 1;
+            if self.i >= self.src.len() {
+                break;
+            }
+        }
+        match symbol.parse::<f64>() {
+            Ok(n) => return Some(Token::Num(n)),
+            Err(_) => {}
+        }
+        Some(Token::Ident(symbol))
+    } 
 
     fn parse_bool(&mut self) -> Option<Token> {
         if self.src[self.i] as char == '#' {
@@ -143,3 +163,54 @@ fn test_token_read_bool_true() {
         assert_eq!(*b, true);
     }
 }
+
+#[test]
+fn test_token_read_bool_false() {
+    let mut l = Lexer::new("#f");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 1);
+    if let Token::Bool(ref b) = tokens[0] { 
+        assert_eq!(*b, false);
+    }
+}
+
+#[test]
+fn test_token_read_num_with_explicit_pos_sign() {
+    let mut l = Lexer::new("+1");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 1);
+    if let Token::Num(ref n) = tokens[0] { 
+        assert_eq!(*n, 1f64);
+    }
+}
+
+#[test]
+fn test_token_read_num_with_explicit_neg_sign() {
+    let mut l = Lexer::new("-1");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 1);
+    if let Token::Num(ref n) = tokens[0] { 
+        assert_eq!(*n, -1f64);
+    }
+}
+
+#[test]
+fn test_token_read_symbol_len_1() {
+    let mut l = Lexer::new("a");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 1);
+    if let Token::Ident(ref i) = tokens[0] { 
+        assert_eq!(*i, "a".to_owned());
+    }
+}
+
+#[test]
+fn test_token_read_symbol_multiple_chars() {
+    let mut l = Lexer::new("foo");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 1);
+    if let Token::Ident(ref i) = tokens[0] { 
+        assert_eq!(*i, "foo".to_owned());
+    }
+}
+
