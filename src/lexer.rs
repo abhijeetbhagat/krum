@@ -93,7 +93,7 @@ impl<'a> Lexer<'a> {
 
     fn parse_symbol(&mut self) -> Option<Token> {
         let mut symbol = String::new();
-        loop {
+        loop { 
             match self.src[self.i] as char { 
                 '(' | 
                 ')' |
@@ -106,18 +106,29 @@ impl<'a> Lexer<'a> {
                 '"' |
                 '[' |
                 ']' => break,
-                c @ _ => symbol.push(c)
+                c @ _ => {
+                    symbol.push(c);
+                    println!("sym {} with len - {}", symbol, symbol.len());
+                }
             }
             self.i = self.i + 1;
-            if self.i >= self.src.len() {
+            if self.i == self.src.len() {
+                //self.i = self.i - 1;
                 break;
             }
         }
-        match symbol.parse::<f64>() {
-            Ok(n) => return Some(Token::Num(n)),
-            Err(_) => {}
+        if !symbol.is_empty() {
+            println!("sym {} with len - {}", symbol, symbol.len());
+            self.i = self.i - 1;
+            match symbol.parse::<f64>() {
+                Ok(n) => return Some(Token::Num(n)),
+                Err(_) => {}
+            }
+
+            return Some(Token::Ident(symbol))
         }
-        Some(Token::Ident(symbol))
+
+        None
     } 
 
     fn parse_bool(&mut self) -> Option<Token> {
@@ -207,3 +218,14 @@ fn test_token_read_symbol_plus() {
     assert_eq!(Token::Ident("+".to_owned()), tokens[0]);
 }
 
+#[test]
+fn test_token_read_add_expression() {
+    let mut l = Lexer::new("(+ 1 2)");
+    let tokens = l.get_tokens();
+    assert_eq!(tokens.len(), 5);
+    assert_eq!(Token::LeftParen, tokens[0]);
+    assert_eq!(Token::Ident("+".to_owned()), tokens[1]);
+    assert_eq!(Token::Num(1f64), tokens[2]);
+    assert_eq!(Token::Num(2f64), tokens[3]);
+    assert_eq!(Token::RightParen, tokens[4]);
+}
