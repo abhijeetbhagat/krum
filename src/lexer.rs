@@ -52,7 +52,9 @@ impl<'a> Lexer<'a> {
             if tok.is_some() {
                 tokens.push(tok.unwrap());
                 self.i = self.i + 1;
-            } 
+            } else if self.src[self.i] as char == ' ' {
+                self.i = self.i + 1;
+            }
             if self.i >= (self.src.len()){
                 break;
             }
@@ -108,17 +110,17 @@ impl<'a> Lexer<'a> {
                 ']' => break,
                 c @ _ => {
                     symbol.push(c);
-                    println!("sym {} with len - {}", symbol, symbol.len());
                 }
             }
             self.i = self.i + 1;
+            //println!("self.i - {}, symbol - {}", self.i, symbol);
             if self.i == self.src.len() {
                 //self.i = self.i - 1;
                 break;
             }
         }
         if !symbol.is_empty() {
-            println!("sym {} with len - {}", symbol, symbol.len());
+            //println!("sym {} with len - {}", symbol, symbol.len());
             self.i = self.i - 1;
             match symbol.parse::<f64>() {
                 Ok(n) => return Some(Token::Num(n)),
