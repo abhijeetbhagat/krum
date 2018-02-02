@@ -1,11 +1,18 @@
 pub enum Expression { 
     Ident(String),
-    Literal,
+    Literal(LiteralExpression),
     ProcedureCall,
     Lambda,
     Conditional,
     Assignment,
     Derived(DerivedExpression)
+}
+
+pub enum LiteralExpression {
+    Bool(bool),
+    Num(f64),
+    Char(char),
+    Str(String),
 }
 
 pub enum DerivedExpression {

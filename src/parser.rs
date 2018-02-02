@@ -20,11 +20,11 @@ impl<'a> Parser<'a> {
             match tokens[i] {
                 Token::LeftParen => {
                 }
-                Token::Num(ref num) => {
-
+                Token::Num(ref num) => { 
+                    LiteralExpression::Num(*num);
                 },
-                Token::Str(ref string) => {
-
+                Token::Str(ref string) => { 
+                    LiteralExpression::Str(string.clone());
                 }
                 _ => {}
             }
