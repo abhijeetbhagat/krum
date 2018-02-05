@@ -13,21 +13,23 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse(&mut self) {
+    pub fn parse_expression(&mut self) {
         let tokens = self.lexer.get_tokens();
         let mut i = 0usize;
-        loop { 
-            match tokens[i] {
+        let mut exp;
+        while i < tokens.len() { 
+            exp = match tokens[i] {
                 Token::LeftParen => {
+                    Expression::Dummy
                 }
                 Token::Num(ref num) => { 
-                    LiteralExpression::Num(*num);
+                    Expression::Literal(LiteralExpression::Num(*num))
                 },
                 Token::Str(ref string) => { 
-                    LiteralExpression::Str(string.clone());
+                    Expression::Literal(LiteralExpression::Str(string.clone()))
                 }
-                _ => {}
-            }
+                _ => Expression::Dummy
+            };
         }
     }
 

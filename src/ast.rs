@@ -5,7 +5,8 @@ pub enum Expression {
     Lambda,
     Conditional,
     Assignment,
-    Derived(DerivedExpression)
+    Derived(DerivedExpression),
+    Dummy
 }
 
 pub enum LiteralExpression {
