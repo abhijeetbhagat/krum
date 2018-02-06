@@ -13,27 +13,30 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse_expression(&mut self) {
+    pub fn parse_expression(&mut self, token : &mut Token) -> Expression {
         let tokens = self.lexer.get_tokens();
         let mut i = 0usize;
-        let mut exp;
-        while i < tokens.len() { 
-            exp = match tokens[i] {
-                Token::LeftParen => {
-                    Expression::Dummy
-                }
-                Token::Num(ref num) => { 
-                    Expression::Literal(LiteralExpression::Num(*num))
-                },
-                Token::Str(ref string) => { 
-                    Expression::Literal(LiteralExpression::Str(string.clone()))
-                }
-                _ => Expression::Dummy
-            };
-        }
+        let mut exp = match token {
+            Token::LeftParen => {
+                return Expression::Dummy
+            }
+            Token::Num(ref num) => { 
+                return Expression::Literal(LiteralExpression::Num(*num))
+            },
+            Token::Str(ref string) => { 
+                return Expression::Literal(LiteralExpression::Str(string.clone()))
+            }
+            _ => return Expression::Dummy
+        };
+        return exp
     }
 
     fn parse_program(&mut self) {
         
     }
+}
+
+#[test]
+fn test_num_expression() {
+    //let mut parser -
 }
