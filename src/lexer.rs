@@ -6,7 +6,8 @@ pub struct Lexer<'a> {
     cur_tok_line : usize,
     cur_tok_col : usize,
     i : usize,
-    src_len : usize
+    src_len : usize,
+    tokens : Vec<Token>
 }
 
 impl<'a> Lexer<'a> { 
@@ -17,7 +18,8 @@ impl<'a> Lexer<'a> {
             cur_tok_line : 0,
             cur_tok_col : 0,
             i : 0,
-            src_len : src.len()
+            src_len : src.len(),
+            tokens : vec![]
         }
     }
 
@@ -25,16 +27,12 @@ impl<'a> Lexer<'a> {
         self.cur_tok.clone()
     }
 
-    pub fn get_tokens(&mut self) -> Vec<Token> { 
-        self.tokenize()
+    pub fn get_tokens(&mut self) -> &Vec<Token> { 
+        self.tokenize();
+        &self.tokens
     }
 
-    fn tokenize(&mut self) -> Vec<Token> {
-        if self.i == self.src_len {
-            return vec![]
-        }
-
-        let mut tokens = vec![];
+    fn tokenize(&mut self) {
         loop { 
             let mut tok = self.parse_left_paren();
             if tok.is_none() {
@@ -50,7 +48,7 @@ impl<'a> Lexer<'a> {
                 tok = self.parse_symbol();
             }
             if tok.is_some() {
-                tokens.push(tok.unwrap());
+                self.tokens.push(tok.unwrap());
                 self.i = self.i + 1;
             } else if self.src[self.i] as char == ' ' {
                 self.i = self.i + 1;
@@ -59,7 +57,6 @@ impl<'a> Lexer<'a> {
                 break;
             }
         }
-        tokens
     }
 
     fn parse_left_paren(&mut self) -> Option<Token>{
