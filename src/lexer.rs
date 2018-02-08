@@ -7,7 +7,7 @@ pub struct Lexer<'a> {
     cur_tok_col : usize,
     i : usize,
     src_len : usize,
-    tokens : Vec<Token>
+    pub tokens : Vec<Token>
 }
 
 impl<'a> Lexer<'a> { 
@@ -27,12 +27,7 @@ impl<'a> Lexer<'a> {
         self.cur_tok.clone()
     }
 
-    pub fn get_tokens(&mut self) -> &Vec<Token> { 
-        self.tokenize();
-        &self.tokens
-    }
-
-    fn tokenize(&mut self) {
+    pub fn tokenize(&mut self) {
         loop { 
             let mut tok = self.parse_left_paren();
             if tok.is_none() {
@@ -147,84 +142,84 @@ impl<'a> Lexer<'a> {
 fn test_token_read_empty_parens() {
     let mut l = Lexer::new("()");
     assert_eq!(l.get_cur_tok(), Token::Eof);
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 2);
-    assert_eq!(tokens[0], Token::LeftParen);
-    assert_eq!(tokens[1], Token::RightParen);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 2);
+    assert_eq!(l.tokens[0], Token::LeftParen);
+    assert_eq!(l.tokens[1], Token::RightParen);
 }
 
 #[test]
 fn test_token_read_string() {
     let mut l = Lexer::new("\"abhi\"");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Str("abhi".to_owned()), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Str("abhi".to_owned()), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_bool_true() {
     let mut l = Lexer::new("#t");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Bool(true), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Bool(true), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_bool_false() {
     let mut l = Lexer::new("#f");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Bool(false), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Bool(false), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_num_with_explicit_pos_sign() {
     let mut l = Lexer::new("+1");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Num(1f64), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Num(1f64), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_num_with_explicit_neg_sign() {
     let mut l = Lexer::new("-1");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Num(-1f64), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Num(-1f64), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_symbol_len_1() {
     let mut l = Lexer::new("a");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Ident("a".to_owned()), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Ident("a".to_owned()), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_symbol_multiple_chars() {
     let mut l = Lexer::new("foo");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Ident("foo".to_owned()), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Ident("foo".to_owned()), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_symbol_plus() {
     let mut l = Lexer::new("+");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 1);
-    assert_eq!(Token::Ident("+".to_owned()), tokens[0]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 1);
+    assert_eq!(Token::Ident("+".to_owned()), l.tokens[0]);
 }
 
 #[test]
 fn test_token_read_add_expression() {
     let mut l = Lexer::new("(+ 1 2)");
-    let tokens = l.get_tokens();
-    assert_eq!(tokens.len(), 5);
-    assert_eq!(Token::LeftParen, tokens[0]);
-    assert_eq!(Token::Ident("+".to_owned()), tokens[1]);
-    assert_eq!(Token::Num(1f64), tokens[2]);
-    assert_eq!(Token::Num(2f64), tokens[3]);
-    assert_eq!(Token::RightParen, tokens[4]);
+    l.tokenize();
+    assert_eq!(l.tokens.len(), 5);
+    assert_eq!(Token::LeftParen, l.tokens[0]);
+    assert_eq!(Token::Ident("+".to_owned()), l.tokens[1]);
+    assert_eq!(Token::Num(1f64), l.tokens[2]);
+    assert_eq!(Token::Num(2f64), l.tokens[3]);
+    assert_eq!(Token::RightParen, l.tokens[4]);
 }

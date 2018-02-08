@@ -13,8 +13,8 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn start() {
-
+    pub fn start(&mut self) { 
+        self.lexer.tokenize();
     }
 
     pub fn parse_expression(&mut self) -> Expression {
@@ -42,5 +42,4 @@ impl<'a> Parser<'a> {
 #[test]
 fn test_num_expression() {
     let mut parser = Parser::new("1");
-    assert_eq!(parser.parse_expression())
 }
