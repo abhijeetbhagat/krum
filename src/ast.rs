@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq)]
 pub enum Expression { 
     Ident(String),
     Literal(LiteralExpression),
@@ -9,6 +10,7 @@ pub enum Expression {
     Dummy
 }
 
+#[derive(Debug, PartialEq)]
 pub enum LiteralExpression {
     Bool(bool),
     Num(f64),
@@ -16,6 +18,7 @@ pub enum LiteralExpression {
     Str(String),
 }
 
+#[derive(Debug, PartialEq)]
 pub enum DerivedExpression {
     Cond,
     CondElse,
