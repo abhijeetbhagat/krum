@@ -52,3 +52,10 @@ fn test_num_expression() {
     parser.start();
     assert_eq!(parser.parse_expression(), Expression::Literal(LiteralExpression::Num(1f64)));
 }
+
+#[test]
+fn test_string_expression() {
+    let mut parser = Parser::new("\"abhi\"");
+    parser.start();
+    assert_eq!(parser.parse_expression(), Expression::Literal(LiteralExpression::Str("abhi".into())));
+}

@@ -2,7 +2,6 @@ use tokens::Token;
 
 pub struct Lexer<'a> {
     src : &'a [u8],
-    cur_tok : Token,
     cur_tok_line : usize,
     cur_tok_col : usize,
     i : usize,
@@ -14,7 +13,6 @@ impl<'a> Lexer<'a> {
     pub fn new(src : &'a str) -> Self { 
         Lexer {
             src : src.as_bytes(),
-            cur_tok : Token::Eof,
             cur_tok_line : 0,
             cur_tok_col : 0,
             i : 0,
@@ -23,9 +21,6 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    pub fn get_cur_tok(&self) -> Token { 
-        self.cur_tok.clone()
-    }
 
     pub fn tokenize(&mut self) {
         loop { 
@@ -141,7 +136,6 @@ impl<'a> Lexer<'a> {
 #[test]
 fn test_token_read_empty_parens() {
     let mut l = Lexer::new("()");
-    assert_eq!(l.get_cur_tok(), Token::Eof);
     l.tokenize();
     assert_eq!(l.tokens.len(), 2);
     assert_eq!(l.tokens[0], Token::LeftParen);
