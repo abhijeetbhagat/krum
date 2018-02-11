@@ -36,6 +36,9 @@ impl<'a> Parser<'a> {
             Token::Str(ref string) => { 
                 return Expression::Literal(LiteralExpression::Str(string.clone()))
             },
+            Token::Bool(ref boolean) => {
+                return Expression::Literal(LiteralExpression::Bool(*boolean))
+            },
             _ => return Expression::Dummy
         };
         return exp
@@ -58,4 +61,11 @@ fn test_string_expression() {
     let mut parser = Parser::new("\"abhi\"");
     parser.start();
     assert_eq!(parser.parse_expression(), Expression::Literal(LiteralExpression::Str("abhi".into())));
+}
+
+#[test]
+fn test_bool_expression() {
+    let mut parser = Parser::new("#t");
+    parser.start();
+    assert_eq!(parser.parse_expression(), Expression::Literal(LiteralExpression::Bool(true)));
 }
