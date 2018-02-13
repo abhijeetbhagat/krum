@@ -28,7 +28,13 @@ pub enum DerivedExpression {
     Or,
     When,
     Unless,
-    Let 
+    Let ,
+    Begin,
+    Do,
+    Delay,
+    DelayForce,
+    Parameterize,
+    Guard
 }
 
 pub struct Program {
